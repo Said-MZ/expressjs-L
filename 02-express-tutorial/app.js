@@ -1,54 +1,36 @@
-const http = require("http");
-const { readFileSync } = require("fs");
+const express = require("express");
+const path = require("path");
+const app = express();
+const { products, people } = require("./data");
 
-//all files
-
-const homePage = readFileSync("./navbar-app/index.html");
-const css = readFileSync("./navbar-app/styles.css");
-const js = readFileSync("./navbar-app/browser-app.js");
-const logo = readFileSync("./navbar-app/logo.svg");
-
-const server = http.createServer((req, res) => {
-  if (req.url === "/") {
-    res.writeHead(200, {
-      "content-type": "text/html",
-    });
-    res.write(homePage);
-    res.end();
-  } else if (req.url === "/about") {
-    res.writeHead(200, {
-      "content-type": "text/html",
-    });
-    res.write("<h1>About page</h1>");
-    res.end();
-  } else if (req.url === "/styles.css") {
-    res.writeHead(200, {
-      "content-type": "text/css",
-    });
-    res.write(css);
-    res.end();
-  } else if (req.url === "/logo.svg") {
-    res.writeHead(200, {
-      "content-type": "image/svg+xml",
-    });
-    res.write(logo);
-    res.end();
-  } else if (req.url === "/browser-app.js") {
-    res.writeHead(200, {
-      "content-type": "text/js",
-    });
-    res.write(js);
-    res.end();
-  } else {
-    res.writeHead(404, {
-      "content-type": "text/html",
-    });
-    res.write(`
-      <h1>404</h1>
-      <h2>page not found</h2>
-      `);
-    res.end();
-  }
+app.get("/", (req, res) => {
+  res.send('<h1>Home page</h1><a href="/api/products">Products</a>');
 });
 
-server.listen(5001);
+app.get("/api/products", (req, res) => {
+  newProducts = products.map((product) => {
+    const { id, name, image } = product;
+    return { id, name, image };
+  });
+  res.json(newProducts);
+});
+
+app.get("/api/products/query", (req, res) => {
+  const { name, age } = req.query;
+  if (!name && !age) return res.send("provide a query");
+  res.json({ name, age });
+});
+
+app.get("/api/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const product = products.find((product) => {
+    return product.id === Number(id);
+  });
+  if (!product) res.status(404).send("Not found");
+  console.log(product);
+  res.json(product);
+});
+
+app.listen(5001, () => {
+  console.log("Listening to port 5001");
+});
