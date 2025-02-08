@@ -1,34 +1,21 @@
 const express = require("express");
-const path = require("path");
 const app = express();
-const { products, people } = require("./data");
+const logger = require("./logger");
+const authorize = require("./authorize");
+const morgan = require("morgan");
+// app.use(morgan("common")); // 3rd party
+// app.use([logger, authorize]); // custom
 
 app.get("/", (req, res) => {
-  res.send('<h1>Home page</h1><a href="/api/products">Products</a>');
+  res.send("hi");
 });
 
-app.get("/api/products", (req, res) => {
-  newProducts = products.map((product) => {
-    const { id, name, image } = product;
-    return { id, name, image };
-  });
-  res.json(newProducts);
+app.get("/about", (req, res) => {
+  res.send("hi from about");
 });
 
-app.get("/api/products/query", (req, res) => {
-  const { name, age } = req.query;
-  if (!name && !age) return res.send("provide a query");
-  res.json({ name, age });
-});
-
-app.get("/api/products/:id", async (req, res) => {
-  const { id } = req.params;
-  const product = products.find((product) => {
-    return product.id === Number(id);
-  });
-  if (!product) res.status(404).send("Not found");
-  console.log(product);
-  res.json(product);
+app.get("/items", (req, res) => {
+  res.send("hi from items");
 });
 
 app.listen(5001, () => {
