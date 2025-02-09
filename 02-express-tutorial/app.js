@@ -1,22 +1,15 @@
 const express = require("express");
 const app = express();
-const logger = require("./logger");
-const authorize = require("./authorize");
-const morgan = require("morgan");
-// app.use(morgan("common")); // 3rd party
-// app.use([logger, authorize]); // custom
+const peopleRouter = require("./routes/people");
+const loginRouter = require("./routes/auth");
 
-app.get("/", (req, res) => {
-  res.send("hi");
-});
+app.use(express.static("./methods-public"));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-app.get("/about", (req, res) => {
-  res.send("hi from about");
-});
+app.use("/api/people", peopleRouter);
 
-app.get("/items", (req, res) => {
-  res.send("hi from items");
-});
+app.use("/login", loginRouter);
 
 app.listen(5001, () => {
   console.log("Listening to port 5001");
