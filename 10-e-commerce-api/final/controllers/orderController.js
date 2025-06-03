@@ -16,11 +16,11 @@ const createOrder = async (req, res) => {
   if (!cartItems || cartItems.length < 1) {
     throw new CustomError.BadRequestError('No cart items provided');
   }
-  if (!tax || !shippingFee) {
-    throw new CustomError.BadRequestError(
-      'Please provide tax and shipping fee'
-    );
-  }
+  if (tax === undefined || shippingFee === undefined) {
+      throw new CustomError.BadRequestError(
+        'Please provide tax and shipping fee'
+      );
+    }
 
   let orderItems = [];
   let subtotal = 0;
